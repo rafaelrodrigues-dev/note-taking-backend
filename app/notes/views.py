@@ -9,6 +9,7 @@ class NoteViewSet(ModelViewSet):
     serializer_class = NoteSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    http_method_names =['get', 'options', 'head', 'post', 'patch', 'delete']
 
     def get_queryset(self):
         return Note.objects.filter(user_id=self.request.user.id)
