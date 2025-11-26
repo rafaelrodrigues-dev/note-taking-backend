@@ -49,8 +49,8 @@ class NoteViewSetTest(APITestCase):
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Should only see 1 note (the one belonging to self.user)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['title'], 'My Note')
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['title'], 'My Note')
 
     def test_retrieve_note(self):
         """Test retrieving a single note detail."""
