@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 User = get_user_model()
 
 
-class UserViewSetTests(APITestCase):
+class UserViewTests(APITestCase):
     def setUp(self):
         # User test
         self.user1 = User.objects.create_user(
@@ -19,23 +19,9 @@ class UserViewSetTests(APITestCase):
         self.token1 = Token.objects.create(user=self.user1)
         self.token2 = Token.objects.create(user=self.user2)
         self.client = APIClient()
-        self.list_url = reverse('user-list')
 
     def auth(self, token):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
-
-    def test_list_requires_authentication(self):
-        response = self.client.get(self.list_url)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-    def test_list_returns_only_authenticated_user(self):
-        self.auth(self.token1)
-        response = self.client.get(self.list_url)
-        assert response.status_code == status.HTTP_200_OK
-        # Return only one user authenticated
-        assert isinstance(response.data, list)
-        assert len(response.data) == 1
-        assert response.data[0]['username'] == self.user1.username
 
     def test_retrieve_self(self):
         self.auth(self.token1)
@@ -59,7 +45,7 @@ class UserViewSetTests(APITestCase):
             'first_name': 'New',
             'last_name': 'User'
         }
-        response = self.client.post(self.list_url, payload)
+        response = self.client.post(reverse('user-create'), payload)
         assert response.status_code == status.HTTP_201_CREATED
         # Create user in database
         assert User.objects.filter(username='new_user').exists()

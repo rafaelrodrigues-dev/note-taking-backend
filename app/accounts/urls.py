@@ -1,7 +1,7 @@
-from rest_framework.routers import SimpleRouter
-from .views import UserModelViewSet
+from django.urls import path
+from .views import UserCreateAPIView, UserAPIView
 
-router = SimpleRouter()
-router.register('', UserModelViewSet, 'user')
-
-urlpatterns = router.urls
+urlpatterns = [
+    path('register/', UserCreateAPIView.as_view(), name='user-create'),
+    path('<int:pk>/', UserAPIView.as_view(), name='user-detail'),
+]
