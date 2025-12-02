@@ -23,21 +23,7 @@ class UserViewTests(APITestCase):
     def auth(self, token):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
 
-    def test_retrieve_self(self):
-        self.auth(self.token1)
-        url = reverse('user-detail', kwargs={'pk': self.user1.pk})
-        response = self.client.get(url)
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['username'] == self.user1.username
-
-    def test_retrieve_other_user_returns_404(self):
-        self.auth(self.token1)
-        url = reverse('user-detail', kwargs={'pk': self.user2.pk})
-        response = self.client.get(url)
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-
-    def test_create_user_authenticated(self):
-        self.auth(self.token1)
+    def test_create_user(self):
         payload = {
             'username': 'new_user',
             'email': 'new_user@example.com',
@@ -51,6 +37,19 @@ class UserViewTests(APITestCase):
         assert User.objects.filter(username='new_user').exists()
         # Password must be not returned in response (write_only)
         assert 'password' not in response.data
+    
+    def test_retrieve_self(self):
+        self.auth(self.token1)
+        url = reverse('user-detail', kwargs={'pk': self.user1.pk})
+        response = self.client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['username'] == self.user1.username
+
+    def test_retrieve_other_user_returns_404(self):
+        self.auth(self.token1)
+        url = reverse('user-detail', kwargs={'pk': self.user2.pk})
+        response = self.client.get(url)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_patch_own_user(self):
         self.auth(self.token1)

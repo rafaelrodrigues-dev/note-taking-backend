@@ -18,7 +18,7 @@ class NoteViewSet(ModelViewSet):
     pagination_class = Pagination
 
     def get_queryset(self):
-        return Note.objects.filter(user_id=self.request.user.id)
+        return Note.objects.filter(user_id=self.request.user.id).order_by('-created_at')
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
